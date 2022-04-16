@@ -22,7 +22,6 @@ class Db:
             self.__username = db_config['username']
             self.__password = quote(db_config['password'])
             self.__dbType = db_config['dbType']
-            #print(self.__password)
         else:
             self.__host = dbDefaultConfig.db_config["host"]
             self.__db = dbDefaultConfig.db_config["db"]
@@ -30,21 +29,13 @@ class Db:
             self.__password = dbDefaultConfig.db_config["password"]
             self.__dbType = dbDefaultConfig.db_config["dbType"]
             self.__port = dbDefaultConfig.db_config["port"]
-        #self.__strConnection = self.__setDbConnectString()
 
         self.__dbExec = dbAccess(self.__setDbConnectString())
-        # if self.__dbType == "mysql":
-        #     self.__dbExec = dbAccess(self.__setDbConnectString())
-        # else:
-        #     # self.__dbExec = dbAccess(self.__setDbConnectString(), client_encoding='utf8')
-        #     # "postgres": "postgresql://{}:{}@{}:{}/{}",
-        #     # strConnection = strConnection.format(self.__username, self.__password, self.__host, self.__port, self.__db)
-        #     self.__dbExec = dbAccess('postgresql+psycopg2://rni:rni%404dm1n@103.140.207.244:5491/eis')
 
     def __setDbConnectString(self):
         strConnection = self.__dbTypeCon[self.__dbType]
-        strConnection = strConnection.format(self.__username, self.__password, self.__host, self.__port, self.__db)
-        # print(strConnection)
+        strConnection = strConnection.format(self.__username, '%s', self.__host, self.__port, self.__db)
+        strConnection = strConnection % quote(self.__password)
         return strConnection
 
     def convert_datetime_to_string(self, datetime):
