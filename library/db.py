@@ -5,6 +5,7 @@ from sqlalchemy.orm import sessionmaker
 from config import db_config as dbDefaultConfig
 import json
 from urllib.parse import quote
+from sqlalchemy.exc import SQLAlchemyError
 
 class Db:
     # engine = create_engine('postgresql+psycopg2://user:password@hostname/database_name')
@@ -42,7 +43,6 @@ class Db:
         return str(datetime)
 
     def executeQuery(self, sqlString):
-        #print(text(sqlString))
         return self.__dbExec.execute(text(sqlString))
 
     def executeToDict(self, sqlString):
@@ -57,13 +57,13 @@ class Db:
         status=""
         try:
             for sqlString in sqlStringArray:
-                #print(sqlString)
                 session.execute(text(sqlString))
             session.commit()
             status = True
-        except:
+        except SQLAlchemyError as e:
             session.rollback()
             status = False
+            print(e)
         finally:
             session.close()
 
@@ -74,7 +74,7 @@ class Db:
         field = "("
         values = "values ("
         for key, item in object.items():
-            field = field + f"{key},"
+            field = field + f""" "{key}","""
             if item == "current_timestamp":
                 values = values + f"{item},"
             else:
@@ -96,7 +96,7 @@ class Db:
 
         field = "("
         for key, item in objectArray[i].items():
-            field = field + f"{key},"
+            field = field + f""" "{key}","""
             fieldx.append(key)
         field = field[:-1] + ")"
 
@@ -130,12 +130,12 @@ class Db:
         where = ""
         for key, item in objectSet.items():
             if item == "current_timestamp":
-                values = values + f"{key}={item},"
+                values = values + f""" "{key}"={item},"""
             else:
                 if item == None or item =='None':
-                    values = values + f"{key}=null,"
+                    values = values + f""" "{key}"=null,"""
                 else:
-                    values = values + f"{key}='{item}',"
+                    values = values + f""" "{key}"='{item}',"""
         for key, item in objectWhere.items():
             where = where + f"{key}='{item}' and "
         values = values[:-1]
@@ -147,7 +147,7 @@ class Db:
         sql = f"delete from {table} where "
         where = ""
         for key, item in objectWhere.items():
-            where = where + f" {key}='{item}' and"
+            where = where + f"""  "{key}"='{item}' and"""
         where = where[:-3]
         sqlString = sql +where
         return sqlString
