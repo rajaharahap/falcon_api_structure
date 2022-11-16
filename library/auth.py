@@ -26,10 +26,10 @@ class Auth(object):
             description = ('The provided auth token is not valid. ' 
                            'Please request a new token and try again.')
 
-            raise falcon.HTTPUnauthorized('Authentication required',
-                                          description,
-                                          challenges,
-                                          href='http://rni.co.id')
+            raise falcon.HTTPUnauthorized(title='Authentication required',
+                                          description=description,
+                                          challenges=challenges,
+                                          href='https://idfood.co.id')
 
 
     def create_token(self, payload_data):
