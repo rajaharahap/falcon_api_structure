@@ -31,7 +31,8 @@ class Db:
             self.__dbType = dbDefaultConfig.db_config["dbType"]
             self.__port = dbDefaultConfig.db_config["port"]
 
-        self.__dbExec = dbAccess(self.__setDbConnectString())
+        if self.__host!="" and self.__db!='' and self.__port!='' and self.__dbType!='':
+            self.__dbExec = dbAccess(self.__setDbConnectString())
 
     def __setDbConnectString(self):
         strConnection = self.__dbTypeCon[self.__dbType]
